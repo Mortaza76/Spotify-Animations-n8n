@@ -1,0 +1,331 @@
+{
+  "name": "LLM → Spotify Autoplay",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name is Mortaza. How can I assist you today?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1072,
+        -320
+      ],
+      "id": "64fab2d9-5acb-4977-b6e4-affce325f0fb",
+      "name": "When chat message received",
+      "webhookId": "276a42e3-17dd-4dd0-a45f-5459c09244ae"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "=you are a spotify assistant you just have to find the name of the song from the user's prompt and show the song as the output only.\nfor example the user says\n\"I want you to play the song named Bandana please please\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -848,
+        -320
+      ],
+      "id": "b26a074b-b1c0-4380-843e-8101e106760b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -784,
+        -96
+      ],
+      "id": "b748494d-4854-464f-a885-c03ca064c651",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "gevf4CFNQSPSzJUB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.uri }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -272,
+        -320
+      ],
+      "id": "ce86e242-3c64-4779-96d1-3d636a40f16e",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "resource": "track",
+        "operation": "search",
+        "query": "={{ $json.output }}",
+        "limit": 2,
+        "filters": {
+          "market": "IN"
+        }
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        -320
+      ],
+      "id": "f2ebe553-dd42-4090-8e41-d416d55141bc",
+      "name": "Search tracks by keyword",
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "retryOnFail": false,
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "QOtKPu8W4piSDE23",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "id": "={{ $('Search tracks by keyword').item.json.uri }}"
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -320
+      ],
+      "id": "e1f9a047-f074-4b0c-8ff4-9e83646e72ee",
+      "name": "Add a song to a queue",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "QOtKPu8W4piSDE23",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Search tracks by keyword').item.json.uri }} you are a smart spotify assistant, you have to tell me the song name and tthe artist name and tell me that this has been added to your queue please enjoy",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        304,
+        -320
+      ],
+      "id": "d50544a0-4ea7-4727-85ff-936dd7a27222",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -96
+      ],
+      "id": "6425d71b-c1dc-4137-b688-73f47ea62e30",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "gevf4CFNQSPSzJUB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -96
+      ],
+      "id": "99bccb28-4b6c-4be2-ad5a-bb6ce3c3391a",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "gevf4CFNQSPSzJUB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "my_session_1",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -144,
+        -96
+      ],
+      "id": "502e2cec-4934-4cec-9134-05557447d4d1",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=session_id2"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "97b79199-6bbd-442a-8288-2adbcb372c2a",
+      "name": "Simple Memory1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Search tracks by keyword",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Add a song to a queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search tracks by keyword": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add a song to a queue": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "23302f33-43d1-4466-a57e-1ffeb3668157",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d5fe21d9e91213c8697612e994de8ce7f19b8b301a2954ee884021398178006e"
+  },
+  "id": "tz9yyWTJgvB0r8xa",
+  "tags": []
+}
