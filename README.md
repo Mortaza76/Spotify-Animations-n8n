@@ -78,7 +78,6 @@ The workflow consists of the following major components:
 5. Configure credentials for **Spotify OAuth2** and **Google Gemini**.
 6. Activate the workflow and start interacting with your AI-powered Spotify assistant.
 
----
 
 ## **Usage Example**
 
@@ -94,7 +93,6 @@ The workflow consists of the following major components:
    "Bandana has been added to your queue! Enjoy your music 🎵"
    ```
 
----
 
 ## **Technologies Used**
 
@@ -103,7 +101,6 @@ The workflow consists of the following major components:
 - **Google Gemini / PaLM** – LLM for natural language understanding.
 - **Spotify API** – To search tracks and add songs to the playback queue.
 
----
 
 ## **Features**
 
@@ -113,7 +110,6 @@ The workflow consists of the following major components:
 - Contextual memory for multi-turn conversations.
 - Modular design for easy extension (e.g., adding playlists or albums).
 
----
 
 ## **Future Improvements**
 
@@ -121,7 +117,6 @@ The workflow consists of the following major components:
 - Integrate WhatsApp or Telegram notifications for song confirmations.
 - Add sentiment-based playlist suggestions using AI.
 
----
 
 ## **Contributing**
 
@@ -129,14 +124,11 @@ The workflow consists of the following major components:
 2. Make improvements or add new features.
 3. Submit a pull request.
 
----
+
 
 ## **License**
 
 This project is licensed under the MIT License.
 
----
-
-## **Demo Screenshot**
 
 
